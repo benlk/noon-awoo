@@ -1,5 +1,6 @@
 name: Send Bluesky Post
-on: 
+on:
+  workflow_dispatch:
   schedule:
     - cron: '0 16,17 * * 3'
 # You may pin to the exact commit or the version.
