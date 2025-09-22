@@ -24,16 +24,16 @@ jobs:
             if [ $(date -z "America/New_York" +%H) -eq '12' ]; then 
               echo 'Time to run!'
               echo "run=True" >> "$GITHUB_OUTPUT"
-              echo "message='Awoo!'" >> "$GITHUB_OUTPUT"
+              echo "message=Awoo!" >> "$GITHUB_OUTPUT"
             else
               echo "It's not noon local time in America/New_York. Waiting for next execution..."
               echo "run=False" >> "$GITHUB_OUTPUT"
-              echo "message=''" >> "$GITHUB_OUTPUT"
+              echo "message=" >> "$GITHUB_OUTPUT"
             fi
           else
             echo 'Trigger is not cron, ommiting time check!'
             echo "run=True" >> "$GITHUB_OUTPUT"
-            echo "message='test awoo?'" >> "$GITHUB_OUTPUT"
+            echo "message=test awoo!" >> "$GITHUB_OUTPUT"
           fi
   post:
     runs-on: ubuntu-latest
