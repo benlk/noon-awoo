@@ -33,6 +33,7 @@ jobs:
           fi
   post:
     runs-on: ubuntu-latest
+    needs: check-run
     if: needs.check-run.outputs.run == 'True'
     steps:
       - uses: myConsciousness/bluesky-post@v5
