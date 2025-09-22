@@ -39,6 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-run
     if: needs.check-run.outputs.run == 'True'
+    environment: "Noon Awoo Bot"
     steps:
       - uses: myConsciousness/bluesky-post@v5
         with:
