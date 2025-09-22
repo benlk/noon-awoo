@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       run: ${{ steps.check_local_time.outputs.run }}
+      message: ${{ steps.check_local_time.outputs.message }}
     steps:
       # https://github.com/orgs/community/discussions/13454#discussioncomment-5097942
       - name: Check local time
@@ -23,13 +24,16 @@ jobs:
             if [ $(date -z "America/New_York" +%H) -eq '12' ]; then 
               echo 'Time to run!'
               echo "run=True" >> "$GITHUB_OUTPUT"
+              echo "message='Awoo!'" >> "$GITHUB_OUTPUT"
             else
               echo "It's not noon local time in America/New_York. Waiting for next execution..."
               echo "run=False" >> "$GITHUB_OUTPUT"
+              echo "message=''" >> "$GITHUB_OUTPUT"
             fi
           else
             echo 'Trigger is not cron, ommiting time check!'
             echo "run=True" >> "$GITHUB_OUTPUT"
+            echo "message='test awoo?'" >> "$GITHUB_OUTPUT"
           fi
   post:
     runs-on: ubuntu-latest
@@ -38,6 +42,7 @@ jobs:
     steps:
       - uses: myConsciousness/bluesky-post@v5
         with:
-          text: "Awoo?"
+          text: ${{ needs.check-run.outputs.message }}
+          tags: "bot,automated"
           identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
           password: ${{ secrets.BLUESKY_PASSWORD }}
