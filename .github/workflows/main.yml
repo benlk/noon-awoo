@@ -1,0 +1,41 @@
+name: Send Bluesky Post
+on: 
+  schedule:
+    - cron: '0 16,17 * * 3'
+# You may pin to the exact commit or the version.
+# uses: myConsciousness/bluesky-post@96827d0a9604cb228b11b3095f6961196efba4a0
+jobs:
+  check-run:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check_local_time.outputs.run }}
+    steps:
+      # https://github.com/orgs/community/discussions/13454#discussioncomment-5097942
+      - name: Check local time
+        id: check_local_time
+        env: 
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          echo "Trigger: ${TRIGGER}"
+          if [[ ${TRIGGER} == 'schedule' ]]; then
+            echo "Checking daylight saving time"
+            if [ $(date -z "America/New_York" +%H) -eq '12' ]; then 
+              echo 'Time to run!'
+              echo "run=True" >> "$GITHUB_OUTPUT"
+            else
+              echo "It's not noon local time in America/New_York. Waiting for next execution..."
+              echo "run=False" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo 'Trigger is not cron, ommiting time check!'
+            echo "run=True" >> "$GITHUB_OUTPUT"
+          fi
+  post:
+    runs-on: ubuntu-latest
+    if: needs.check-run.outputs.run == 'True'
+    steps:
+      - uses: myConsciousness/bluesky-post@v5
+        with:
+          text: "Awoo?"
+          identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
+          password: ${{ secrets.BLUESKY_PASSWORD }}
